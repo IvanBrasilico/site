@@ -36,13 +36,15 @@
   </nav>
   <div class="container">
     <ul id="rowTab" class="nav nav-tabs">
-      <li class="active"><a data-toggle="tab" href="#home">Rank filter</a></li>
-      <li><a data-toggle="tab" href="#menu1">Search filter</a></li>
-      <li><a data-toggle="tab" href="#menu2">Selection</a></li>
+      <li class="active"><a data-toggle="tab" href="#rank">Rank filter</a></li>
+      <li><a data-toggle="tab" href="#filter">Search filter</a></li>
+      <li><a data-toggle="tab" href="#select">Selection</a></li>
+      <li><a data-toggle="tab" href="#cloud">Word Cloud</a></li>
+      <li><a data-toggle="tab" href="#stats">Show stats</a></li>
     </ul>
     <div class="tab-content">
-      <div id="home" class="tab-pane fade in active">
-        <div id="rank" class="row">
+      <div id="rank" class="tab-pane fade in active">
+        <div id="ranking" class="row">
           <h2>Ranking de documentos</h2>
           <div class="col-md-2">
             <h3>Palavras</h3>
@@ -78,8 +80,8 @@
         </div>
       </div> <!-- /#list -->
     </div>
-    <div id="menu1" class="tab-pane fade">
-      <div id="filter" class="row">
+    <div id="filter" class="tab-pane fade">
+      <div id="filtered" class="row">
         <h2>Filtragem de documentos por título</h2>
         <div class="col-md-2">
           <h3>Título</h3>
@@ -116,8 +118,8 @@
       </div>
     </div> <!-- /#list -->
   </div>
-  <div id="menu2" class="tab-pane fade in active">
-    <div id="selection" class="row">
+  <div id="select" class="tab-pane fade in active">
+    <div id="selecttop" class="row">
       <h2>Seleção de documentos</h2>
       <div class="col-md-2">
         <h3>Capítulo</h3>
@@ -133,11 +135,50 @@
       </div>
     </div> <!-- /#top -->
     <hr />
-    <div id="list" class="row">
+    <div id="selectlist" class="row">
       <div class="col-md-12">
         <span id="errors"></span>
         <span id="contents">Descrição e notas do capítulo</span>
       </div>
+    </div> <!-- /#list -->
+  </div>
+  <div id="cloud" class="tab-pane fade in active">
+    <div id="cloudtop" class="row">
+          <div class="col-md-2">
+           </div>
+           <div class="col-md-8">
+               <p>
+                   <label for="amount">Frequency Range:</label>
+                   <input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold;">
+               </p>
+               <div id="slider-range"></div>
+           </div>
+           <div class="col-md-2">
+           </div>
+    </div> <!-- /#top -->
+     <div id="cloudlist" class="row">
+       <div class="col-md-12">
+           <span id="errors"></span>
+           <span id="cloudcontents">Word Cloud</span>
+           <p>
+           <img id="wc" src="static/wc.jpg">
+           </p>
+       </div>
+    </div> <!-- /#list -->
+  </div>
+  <div id="stats" class="tab-pane fade in active">
+    <div id="statstop" class="row">
+          <div class="col-md-2">
+           </div>
+           <div class="col-md-8">
+             Statistics of the collection
+           </div>
+           <div class="col-md-2">
+           </div>
+    </div> <!-- /#top -->
+     <div id="statslist" class="row">
+       <div class="col-md-12">
+       </div>
     </div> <!-- /#list -->
   </div>
 </div>
@@ -299,6 +340,30 @@ $( function() {
       }
     });
   });
+  </script>
+  <script type="text/javascript">
+   $( function() {
+     $( "#slider-range" ).slider({
+       range: true,
+       min: 1,
+       max: 1000,
+       values: [ 0, 1000 ],
+       slide: function( event, ui ) {
+         $( "#amount" ).val( ui.values[ 0 ] + " - " + ui.values[ 1 ] );
+       }
+     });
+     $( "#amount" ).val( $( "#slider-range" ).slider( "values", 0 ) +
+       " - " + $( "#slider-range" ).slider( "values", 1 ) );
+     $( "#slider-range" ).slider({
+       change: function( event, ui ) {
+       }
+     });
+     $( "#slider-range" ).on( "slidechange", function( event, ui ) {
+         $.getJSON('/_wordcloud_range?minv='+ui.values[ 0 ] + "&maxv=" + ui.values[ 1 ], {});
+         d = new Date();
+         $("#wc").attr("src", "static/wc.jpg?"+d.getTime());
+     } );
+    });
   </script>
 </body>
 </html>
