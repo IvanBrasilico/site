@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/jquery-ui.css" rel="stylesheet">
+
+  </head>
+  <body>
+    
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#f90f61b9905f03cbe6f423f59bb7656b201200c0" data-toggle="collapse" type="button">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <span class="navbar-brand">Collections Finder</span>
+    </div>
+    <div class="navbar-collapse collapse" id="f90f61b9905f03cbe6f423f59bb7656b201200c0">
+      <ul class="nav navbar-nav">
+        <li>
+          <a href="/" title="Rank">Rank</a>
+        </li>
+        <li class="active">
+          <a href="/filter.html" title="Filtered">Filtered</a>
+        </li>
+        <li>
+          <a href="/selection.html" title="Selection">Selection</a>
+        </li>
+        <li>
+          <a href="/collection.html" title="Change Collection">Change Collection</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    
+<div id="main" class="container-fluid">
+     <div id="top" class="row">
+        <h2>Filtragem de documentos por título</h2>
+           <div class="col-md-2">
+                <h3>Título</h3>
+            </div>
+            <div class="col-md-8">
+                <div class="input-group h2">
+                    <input name="afilter" class="form-control" id="afilter" type="text" placeholder="Entre um termo para pesquisar">
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" id="btnfilter" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <a href="help.html" class="btn btn-primary pull-right h2">Help</a>
+            </div>
+     </div> <!-- /#top -->
+     <hr />
+     <div id="list" class="row">
+        <div class="table-responsive col-md-12">
+        <span id="errors"></span>
+        <table class="table table-striped" cellspacing="0" cellpadding="0"
+         id="records_table">
+        <thead>
+            <tr>
+                <th>Subitem</th>
+                <th>Descrição completa</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        </table>
+        </div>
+     </div> <!-- /#list -->
+     <div id="bottom" class="row">
+        Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+     </div> <!-- /#bottom -->
+ </div>  <!-- /#main -->
+
+
+    
+ <script src="/static/js/jquery.js"></script>
+ <script src="/static/js/bootstrap.js"></script>
+ <script type="text/javascript">
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON('/_filter_documents', {
+        afilter: $('input[name="afilter"]').val(),
+      }, function(data) {
+        console.log(data);
+        $('#records_table tbody tr').remove();
+       $.each(data, function(i, doc) {
+        $('<tr>').append(
+            $('<td>').text(doc.title),
+            $('<td>').text(doc.contents)
+        ).appendTo('#records_table');
+        });
+       $('input[name="afilter"]').focus().select();
+      });
+      return false;
+    };
+    $('button#btnfilter').bind('click', submit_form);
+    $('input[type="text"]').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+});
+</script>
+
+
+  </body>
+</html>

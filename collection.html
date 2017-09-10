@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/jquery-ui.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5" data-toggle="collapse" type="button">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <span class="navbar-brand">Collections Manager</span>
+        </div>
+        <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="/" title="Site">Brasilico's Site</a>
+            </li>
+            <li>
+              <a href="/collectionmanager.html" title="Home">Home</a>
+            </li>
+            <li  class="active">
+              <a href="/collection.html" title="Change Collection">Change Collection</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+<div id="main" class="container-fluid">
+     <div id="top" class="row">
+        <h2>Selecione a coleção a trabalhar</h2>
+           <div class="col-md-2">
+                <h3>Título</h3>
+            </div>
+            <div class="col-md-8">
+                <div class="input-group h2">
+                    <select id="collections" width="90%">
+</select><span class="input-group-btn">
+                        <button class="btn btn-primary" id="btnOK" type="submit">
+                            <span class="glyphicon glyphicon-search"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <a href="help.html" class="btn btn-primary pull-right h2">Help</a>
+            </div>
+     </div> <!-- /#top -->
+     <hr />
+     <div id="bottom" class="row">
+        Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+     </div> <!-- /#bottom -->
+ </div>  <!-- /#main -->
+
+
+
+ <script src="/static/js/jquery.js"></script>
+ <script src="/static/js/bootstrap.js"></script>
+ <script type="text/javascript">
+  $(function() {
+   $(document).ready(function() {
+        $.getJSON("/_collections", function(data) {
+            console.log(data);
+            var listitems;
+            var $select = $('#collections');
+            $select.find('option').remove();
+            $.each(data, function(i, item){
+                listitems += '<option value=' + item.id + '>' + item.name + '</option>';
+            });
+            $select.append(listitems);
+        });
+       $('input[name="words"]').focus().select();
+   });
+  });
+  $(function() {
+    var submit_form = function(e) {
+
+      $.getJSON('/_set_collection/'+$('#collections').val(), {
+
+      });
+      return false;
+    };
+    $('button#btnOK').bind('click', submit_form);
+    $('#down').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+});
+</script>
+
+
+  </body>
+</html>

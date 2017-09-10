@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="/static/css/bootstrap.css" rel="stylesheet">
+  <link href="/static/css/jquery-ui.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#97bf8afda672ef73a836d55f018b43c868a97bb5" data-toggle="collapse" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand">Collections Manager</span>
+      </div>
+      <div class="navbar-collapse collapse" id="97bf8afda672ef73a836d55f018b43c868a97bb5">
+        <ul class="nav navbar-nav">
+          <li>
+            <a href="/" title="Site">Brasilico's Site</a>
+          </li>
+          <li class="active">
+            <a href="/collectionmanager.html" title="Home">Home</a>
+          </li>
+          <li>
+            <a href="/collection.html" title="Change Collection">Change Collection</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <ul id="rowTab" class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#home">Rank filter</a></li>
+      <li><a data-toggle="tab" href="#menu1">Search filter</a></li>
+      <li><a data-toggle="tab" href="#menu2">Selection</a></li>
+    </ul>
+    <div class="tab-content">
+      <div id="home" class="tab-pane fade in active">
+        <div id="rank" class="row">
+          <h2>Ranking de documentos</h2>
+          <div class="col-md-2">
+            <h3>Palavras</h3>
+          </div>
+          <div class="col-md-8">
+            <div class="ui-widget">
+              <input id="words" name="words" size="90%" placeholder="Entre um ou mais termos para pesquisar" />
+              <button class="btn btn-primary" id="btnrank" type="button">
+                <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <a href="help.html" class="btn btn-primary pull-right h2">Help</a>
+          </div>
+        </div> <!-- /#top -->
+        <hr />
+        <div id="list" class="row">
+          <div class="table-responsive col-md-12">
+            <span id="errors"></span>
+            <table class="table table-striped" cellspacing="0" cellpadding="0"
+            id="records_table">
+            <thead>
+              <tr>
+                <th>Score</th>
+                <th>Subitem</th>
+                <th>Descrição completa</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div> <!-- /#list -->
+    </div>
+    <div id="menu1" class="tab-pane fade">
+      <div id="filter" class="row">
+        <h2>Filtragem de documentos por título</h2>
+        <div class="col-md-2">
+          <h3>Título</h3>
+        </div>
+        <div class="col-md-8">
+          <div class="input-group h2">
+            <input name="afilter" class="form-control" id="afilter" type="text" placeholder="Entre um termo para pesquisar">
+            <span class="input-group-btn">
+              <button class="btn btn-primary" id="btnfilter" type="submit">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <a href="help.html" class="btn btn-primary pull-right h2">Help</a>
+        </div>
+      </div> <!-- /#top -->
+      <hr />
+      <div id="listfilter" class="row">
+        <div class="table-responsive col-md-12">
+          <span id="errors"></span>
+          <table class="table table-striped" cellspacing="0" cellpadding="0"
+          id="records_table_filter">
+          <thead>
+            <tr>
+              <th>Subitem</th>
+              <th>Descrição completa</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div> <!-- /#list -->
+  </div>
+  <div id="menu2" class="tab-pane fade in active">
+    <div id="selection" class="row">
+      <h2>Seleção de documentos</h2>
+      <div class="col-md-2">
+        <h3>Capítulo</h3>
+      </div>
+      <div class="col-md-8">
+        <div class="input-group h2">
+          <select id="titles" width="90%">
+          </select>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <a href="help.html" class="btn btn-primary pull-right h2">Help</a>
+      </div>
+    </div> <!-- /#top -->
+    <hr />
+    <div id="list" class="row">
+      <div class="col-md-12">
+        <span id="errors"></span>
+        <span id="contents">Descrição e notas do capítulo</span>
+      </div>
+    </div> <!-- /#list -->
+  </div>
+</div>
+</div>
+<div id="bottom" class="row">
+  <div class="col-md-12">
+    Copyleft IvanBrasilico 2017 - All stuff GPLv3 Licensed except explicited or from outer sources
+  </div>
+</div> <!-- /#bottom -->
+
+
+
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+<script src="/static/js/jquery-ui.js"></script>
+<script type="text/javascript">
+$(function() {
+  var submit_form = function(e) {
+    $.getJSON('/_rank', {
+      words: $('input[name="words"]').val(),
+    }, function(data) {
+      console.log(data);
+      $('#records_table tbody tr').remove();
+      $.each(data, function(i, item) {
+        $('<tr>').append(
+          $('<td>').text(item.score),
+          $('<td>').text(item.title),
+          $('<td>').text(item.contents)
+        ).appendTo('#records_table');
+      });
+      $('input[name="words"]').focus().select();
+    });
+    return false;
+  };
+  $('button#btnrank').bind('click', submit_form);
+  $('input[type="text"]').bind('keydown', function(e) {
+    if (e.keyCode == 13) {
+      submit_form(e);
+    }
+  });
+  $('input[name="words"]').focus();
+});
+$( function() {
+  var availableTags;
+  var update_drop_down = function(e) {
+    $.getJSON($SCRIPT_ROOT + '/_correct', {
+      words: $('input[name="words"]').val(),
+    }, function(data) {
+      console.log(data);
+      availableTags = data;
+      $( "#words" ).autocomplete({
+        source: availableTags
+      });
+    });
+    return false;
+  };
+});
+$( function() {
+  function split( val ) {
+    return val.split( /,\s*/ );
+  }
+  function extractLast( term ) {
+    var n = term.split(" ");
+    return n[n.length - 1];
+  }
+  $( "#words" )
+  // don't navigate away from the field on tab when selecting an item
+  .on( "keydown", function( event ) {
+    if ( event.keyCode === $.ui.keyCode.TAB &&
+      $( this ).autocomplete( "instance" ).menu.active ) {
+        event.preventDefault();
+      }
+    })
+    .autocomplete({
+      source: function( request, response ) {
+        $.getJSON( "_correct", {
+          words: extractLast( request.term )
+        }, response );
+      },
+      search: function() {
+        // custom minLength
+        var term = extractLast( this.value );
+        if ( term.length < 2 ) {
+          return false;
+        }
+      },
+      focus: function() {
+        // prevent value inserted on focus
+        return false;
+      },
+      select: function( event, ui ) {
+        var terms = this.value.split(" ")
+        // remove the current input
+        terms.pop();
+        // add the selected item
+        terms.push( ui.item.value );
+        // add placeholder to get the comma-and-space at the end
+        terms.push( "" );
+        this.value = terms.join( " " );
+        return false;
+      }
+    });
+  });
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON('/_filter_documents', {
+        afilter: $('input[name="afilter"]').val(),
+      }, function(data) {
+        console.log(data);
+        $('#records_table_filter tbody tr').remove();
+        $.each(data, function(i, doc) {
+          $('<tr>').append(
+            $('<td>').text(doc.title),
+            $('<td>').text(doc.contents)
+          ).appendTo('#records_table_filter');
+        });
+        $('input[name="afilter"]').focus().select();
+      });
+      return false;
+    };
+    $('button#btnfilter').bind('click', submit_form);
+    $('input[type="text"]').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+  });
+  </script>
+  <script type="text/javascript">
+  $(function() {
+    $(document).ready(function() {
+      $('#rowTab a:last').tab('show');
+      $.getJSON("/_documents", function(data) {
+        console.log(data);
+        var listitems;
+        var $select = $('#titles');
+        $select.find('option').remove();
+        $.each(data, function(i, item){
+          listitems += '<option value=' + item.id + '>' + item.title + '</option>';
+        });
+        $select.append(listitems);
+      });
+      $('#rowTab a:first').tab('show');
+    });
+  });
+  $(function() {
+    var submit_form = function(e) {
+      $.getJSON('/_document_content/'+$('#titles').val(), {
+      }, function(data) {
+        console.log(data);
+        $('span#contents').html(data);
+      });
+      return false;
+    };
+    $('#titles').bind('change', submit_form);
+    $('#down').bind('keydown', function(e) {
+      if (e.keyCode == 13) {
+        submit_form(e);
+      }
+    });
+  });
+  </script>
+</body>
+</html>
